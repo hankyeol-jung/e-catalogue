@@ -40,7 +40,7 @@ let Slider = styled.div`
   overflow: hidden;
 `;
 let SliderGroup = styled.div`
-  width: 900px;
+  width: ${(props) => props.width}px;
   height: 500px;
   margin: auto;
   transition: all 1s;
@@ -55,23 +55,33 @@ let SliderContent = styled.div`
 `;
 
 function App() {
-  const keyboard = Array.from({ length: 31 }, (v, i) => i + 1);
-  let [pageNum, setPageNum] = useState(keyboard);
+  let [pageNum, setPageNum] = useState(1);
+  // 슬라이트 너비 state
   let [slideWidth, setSlideWidth] = useState(0);
+  // data or img 소스 받아오는 state
+  let [contents, setContents] = useState([
+    "orange",
+    "red",
+    "yellow",
+    "black",
+    "gray",
+  ]);
 
   return (
     <div className="App">
       <Slider>
-        <SliderGroup x={slideWidth}>
-          <SliderContent bg="orange"></SliderContent>
-          <SliderContent bg="red"></SliderContent>
-          <SliderContent bg="yellow"></SliderContent>
+        <SliderGroup x={slideWidth} width={contents.length * 300}>
+          {contents.map(function (a, i) {
+            return <SliderContent bg={a}></SliderContent>;
+          })}
         </SliderGroup>
       </Slider>
       <NavBar
         pageNum={pageNum}
+        setPageNum={setPageNum}
         slideWidth={slideWidth}
         setSlideWidth={setSlideWidth}
+        contents={contents}
       />
     </div>
   );
@@ -88,19 +98,25 @@ function NavBar(props) {
           props.slideWidth == 0
             ? alert("1번째 페이지입니다.")
             : props.setSlideWidth(props.slideWidth + 300);
+          props.slideWidth == 0
+            ? props.setPageNum(props.pageNum)
+            : props.setPageNum(props.pageNum - 1);
         }}
         className="prev"
       >
         <FontAwesomeIcon icon={faAngleLeft} />
       </CircleBox>
       <NormalBox>
-        {props.pageNum[0]} / {props.pageNum.slice(-1)}
+        {props.pageNum} / {props.contents.length}
       </NormalBox>
       <CircleBox
         onClick={() => {
-          props.slideWidth == -600
+          props.slideWidth == props.contents.length * -300 + 300
             ? alert("마지막 페이지입니다.")
             : props.setSlideWidth(props.slideWidth - 300);
+          props.slideWidth == props.contents.length * -300 + 300
+            ? props.setPageNum(props.pageNum)
+            : props.setPageNum(props.pageNum + 1);
         }}
       >
         <FontAwesomeIcon icon={faAngleRight} />
