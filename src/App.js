@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Button, Alert } from "react-bootstrap";
@@ -66,13 +66,23 @@ function App() {
     "black",
     "gray",
   ]);
+  // data or img 소스 받아오는 state
+  let [conClass, setConClass] = useState(["end", "", "", "", ""]);
+  // 애니메이션 태그 state
+  let [fade, setFade] = useState("");
 
   return (
     <div className="App">
       <Slider>
         <SliderGroup x={slideWidth} width={contents.length * 300}>
           {contents.map(function (a, i) {
-            return <SliderContent bg={a}></SliderContent>;
+            return (
+              <SliderContent
+                key={i}
+                className={"start " + conClass[i]}
+                bg={a}
+              ></SliderContent>
+            );
           })}
         </SliderGroup>
       </Slider>
@@ -82,12 +92,27 @@ function App() {
         slideWidth={slideWidth}
         setSlideWidth={setSlideWidth}
         contents={contents}
+        setConClass={setConClass}
+        conClass={conClass}
       />
     </div>
   );
 }
 
 function NavBar(props) {
+  let fade = () => {
+    let copy = [...props.conClass];
+    copy[props.pageNum - 1] = "";
+    copy[props.pageNum] = "end";
+    props.setConClass(copy);
+  };
+  let removeFade = () => {
+    let copy = [...props.conClass];
+    copy[props.pageNum - 2] = "end";
+    copy[props.pageNum - 1] = "";
+    props.setConClass(copy);
+    console.log(props.pageNum - 1);
+  };
   return (
     <div className="controlBar">
       <CircleBox>
@@ -101,6 +126,7 @@ function NavBar(props) {
           props.slideWidth == 0
             ? props.setPageNum(props.pageNum)
             : props.setPageNum(props.pageNum - 1);
+          removeFade();
         }}
         className="prev"
       >
@@ -117,6 +143,7 @@ function NavBar(props) {
           props.slideWidth == props.contents.length * -300 + 300
             ? props.setPageNum(props.pageNum)
             : props.setPageNum(props.pageNum + 1);
+          fade();
         }}
       >
         <FontAwesomeIcon icon={faAngleRight} />
