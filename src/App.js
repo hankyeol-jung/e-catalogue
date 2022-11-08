@@ -31,7 +31,7 @@ let CircleBox = styled.button`
   border: none;
   color: #fff;
   margin: 8px;
-  transition: all 0.5s;
+  transition: all 0.3s;
 `;
 let NormalBox = styled.button`
   background: #ddd;
@@ -43,30 +43,28 @@ let NormalBox = styled.button`
   margin: 0 15px;
 `;
 let Slider = styled.div`
-  width: ${(props) => props.width}px;
+  width: ${(props) => props.width}vw;
   height: 860px;
   margin: auto;
   overflow: hidden;
   position: relative;
   bottom: -50px;
+  transition: 0.3s;
 `;
 let SliderGroup = styled.div`
-  width: ${(props) => props.width}px;
+  width: ${(props) => props.width}vw;
   height: 860px;
   margin: auto;
-  transition: all 1s;
-  transform: translateX(${(props) => props.x}px);
+  transition: all 0.3s;
+  transform: translateX(${(props) => props.x}vw);
 `;
 let SliderContent = styled.div`
   // background: ${(props) => props.bg};
-  width: ${(props) => props.width}px;
+  width: ${(props) => props.width}vw;
   height: 860px;
   margin: auto;
   float: left;
-  background-image: url("${(props) => props.img}");
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
+  transition: 0.3s;
 `;
 
 function App() {
@@ -87,9 +85,19 @@ function App() {
   // data or img 소스 받아오는 state
   let [conClass, setConClass] = useState(["end", "", "", "", "", "", "", ""]);
   // img width 값
-  let [imgWidth, setImgWidth] = useState(310);
+  let [imgWidth, setImgWidth] = useState(100);
+  // width 값
+  let [widthResult, setWidthResult] = useState(310);
+  // img width 값
+  let [conWidth, setConWidth] = useState(widthResult);
+  // 확대 width 값
+  let [maxWidth, setMaxWidth] = useState(810);
+  // 프로그래스 값
+  let [maxControl, setMaxControl] = useState(1);
   // 애니메이션 태그 state
   let [fade, setFade] = useState("");
+  // 줌인 상태
+  let [zoomState, setZoomState] = useState(false);
 
   return (
     <div className="App">
@@ -99,15 +107,36 @@ function App() {
             return (
               <SliderContent
                 key={i}
-                className={"start " + conClass[i]}
+                className={"slideImg start " + conClass[i]}
                 bg={a}
                 width={imgWidth}
-                img={contents[i]}
-              ></SliderContent>
+              >
+                <img src={contents[i]} style={{ width: conWidth }} />
+              </SliderContent>
             );
           })}
         </SliderGroup>
       </Slider>
+      {zoomState == true ? (
+        <ZoomBar
+          imgWidth={imgWidth}
+          setImgWidth={setImgWidth}
+          zoomState={zoomState}
+          setZoomState={setZoomState}
+          slideWidth={slideWidth}
+          setSlideWidth={setSlideWidth}
+          pageNum={pageNum}
+          setPageNum={setPageNum}
+          widthResult={widthResult}
+          setWidthResult={setWidthResult}
+          conWidth={conWidth}
+          setConWidth={setConWidth}
+          maxWidth={maxWidth}
+          setMaxWidth={setMaxWidth}
+          maxControl={maxControl}
+          setMaxControl={setMaxControl}
+        />
+      ) : null}
       <NavBar
         pageNum={pageNum}
         setPageNum={setPageNum}
@@ -117,6 +146,17 @@ function App() {
         setConClass={setConClass}
         conClass={conClass}
         imgWidth={imgWidth}
+        setImgWidth={setImgWidth}
+        zoomState={zoomState}
+        setZoomState={setZoomState}
+        conWidth={conWidth}
+        setConWidth={setConWidth}
+        widthResult={widthResult}
+        setWidthResult={setWidthResult}
+        maxWidth={maxWidth}
+        setMaxWidth={setMaxWidth}
+        maxControl={maxControl}
+        setMaxControl={setMaxControl}
       />
     </div>
   );
@@ -224,6 +264,47 @@ function NavBar(props) {
       >
         <FontAwesomeIcon icon={faAnglesRight} />
       </CircleBox>
+
+      <CircleBox
+        onClick={() => {
+          let copy = props.maxWidth;
+          props.setConWidth(copy);
+          props.setZoomState(true);
+        }}
+      >
+        +
+      </CircleBox>
+    </div>
+  );
+}
+
+function ZoomBar(props) {
+  console.log("");
+  return (
+    <div className="zoomBar">
+      <div className="main-btn-group">
+        <input
+          type="range"
+          min="1"
+          max="100"
+          onChange={(e) => {
+            props.setMaxControl(props.widthResult + e.target.value * 10);
+            // let copy = props.widthResult / 10;
+            props.setConWidth(props.maxControl);
+            console.log(props.conWidth);
+          }}
+        ></input>
+        <button
+          className="btn"
+          onClick={() => {
+            let copy = props.widthResult;
+            props.setConWidth(copy);
+            props.setZoomState(false);
+          }}
+        >
+          x
+        </button>
+      </div>
     </div>
   );
 }
