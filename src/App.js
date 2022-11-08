@@ -14,6 +14,14 @@ import {
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import React from "react";
+import img1 from "./image/page1.jpg";
+import img2 from "./image/page2.jpg";
+import img3 from "./image/page3.jpg";
+import img4 from "./image/page4.jpg";
+import img5 from "./image/page5.jpg";
+import img6 from "./image/page6.jpg";
+import img7 from "./image/page7.jpg";
+import img8 from "./image/page8.jpg";
 
 let CircleBox = styled.button`
   background: #ddd;
@@ -35,24 +43,30 @@ let NormalBox = styled.button`
   margin: 0 15px;
 `;
 let Slider = styled.div`
-  width: 300px;
-  height: 500px;
+  width: ${(props) => props.width}px;
+  height: 860px;
   margin: auto;
   overflow: hidden;
+  position: relative;
+  bottom: -50px;
 `;
 let SliderGroup = styled.div`
   width: ${(props) => props.width}px;
-  height: 500px;
+  height: 860px;
   margin: auto;
   transition: all 1s;
   transform: translateX(${(props) => props.x}px);
 `;
 let SliderContent = styled.div`
-  background: ${(props) => props.bg};
-  width: 300px;
-  height: 500px;
+  // background: ${(props) => props.bg};
+  width: ${(props) => props.width}px;
+  height: 860px;
   margin: auto;
   float: left;
+  background-image: url("${(props) => props.img}");
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
 `;
 
 function App() {
@@ -61,27 +75,34 @@ function App() {
   let [slideWidth, setSlideWidth] = useState(0);
   // data or img 소스 받아오는 state
   let [contents, setContents] = useState([
-    "orange",
-    "red",
-    "yellow",
-    "black",
-    "gray",
+    img1,
+    img2,
+    img3,
+    img4,
+    img5,
+    img6,
+    img7,
+    img8,
   ]);
   // data or img 소스 받아오는 state
-  let [conClass, setConClass] = useState(["end", "", "", "", ""]);
+  let [conClass, setConClass] = useState(["end", "", "", "", "", "", "", ""]);
+  // img width 값
+  let [imgWidth, setImgWidth] = useState(310);
   // 애니메이션 태그 state
   let [fade, setFade] = useState("");
 
   return (
     <div className="App">
-      <Slider>
-        <SliderGroup x={slideWidth} width={contents.length * 300}>
+      <Slider width={imgWidth}>
+        <SliderGroup x={slideWidth} width={contents.length * imgWidth}>
           {contents.map(function (a, i) {
             return (
               <SliderContent
                 key={i}
                 className={"start " + conClass[i]}
                 bg={a}
+                width={imgWidth}
+                img={contents[i]}
               ></SliderContent>
             );
           })}
@@ -95,6 +116,7 @@ function App() {
         contents={contents}
         setConClass={setConClass}
         conClass={conClass}
+        imgWidth={imgWidth}
       />
     </div>
   );
@@ -151,7 +173,7 @@ function NavBar(props) {
         onClick={() => {
           props.slideWidth == 0
             ? alert("1번째 페이지입니다.")
-            : props.setSlideWidth(props.slideWidth + 300);
+            : props.setSlideWidth(props.slideWidth + props.imgWidth);
           props.slideWidth == 0
             ? props.setPageNum(props.pageNum)
             : props.setPageNum(props.pageNum - 1);
@@ -168,13 +190,16 @@ function NavBar(props) {
       <CircleBox
         className="circleBtn"
         onClick={() => {
-          props.slideWidth == props.contents.length * -300 + 300
+          props.slideWidth ==
+          props.contents.length * -props.imgWidth + props.imgWidth
             ? alert("마지막 페이지입니다.")
-            : props.setSlideWidth(props.slideWidth - 300);
-          props.slideWidth == props.contents.length * -300 + 300
+            : props.setSlideWidth(props.slideWidth - props.imgWidth);
+          props.slideWidth ==
+          props.contents.length * -props.imgWidth + props.imgWidth
             ? props.setPageNum(props.pageNum)
             : props.setPageNum(props.pageNum + 1);
-          props.slideWidth == props.contents.length * -300 + 300
+          props.slideWidth ==
+          props.contents.length * -props.imgWidth + props.imgWidth
             ? props.setPageNum(props.pageNum)
             : fade();
         }}
@@ -184,10 +209,14 @@ function NavBar(props) {
       <CircleBox
         className="circleBtn"
         onClick={() => {
-          props.slideWidth == props.contents.length * -300 + 300
+          props.slideWidth ==
+          props.contents.length * -props.imgWidth + props.imgWidth
             ? alert("마지막 페이지입니다.")
-            : props.setSlideWidth(props.contents.length * -300 + 300);
-          props.slideWidth == props.contents.length * -300 + 300
+            : props.setSlideWidth(
+                props.contents.length * -props.imgWidth + props.imgWidth
+              );
+          props.slideWidth ==
+          props.contents.length * -props.imgWidth + props.imgWidth
             ? props.setPageNum(props.pageNum)
             : props.setPageNum(props.contents.length);
           fade2();
