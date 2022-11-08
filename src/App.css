@@ -15,6 +15,11 @@
   user-select: none;
 }
 
+.circleBtn:hover {
+  background-color: greenyellow;
+  color: #222;
+}
+
 .start {
   opacity: 0;
   transition: opacity 0.5s;

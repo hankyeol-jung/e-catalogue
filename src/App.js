@@ -23,6 +23,7 @@ let CircleBox = styled.button`
   border: none;
   color: #fff;
   margin: 8px;
+  transition: all 0.5s;
 `;
 let NormalBox = styled.button`
   background: #ddd;
@@ -106,6 +107,14 @@ function NavBar(props) {
     copy[props.pageNum] = "end";
     props.setConClass(copy);
   };
+  let fade2 = () => {
+    let copy = [...props.conClass];
+    copy.map(function (a, i) {
+      copy[i] = "";
+    });
+    copy[props.contents.length - 1] = "end";
+    props.setConClass(copy);
+  };
   let removeFade = () => {
     let copy = [...props.conClass];
     copy[props.pageNum - 2] = "end";
@@ -113,12 +122,32 @@ function NavBar(props) {
     props.setConClass(copy);
     console.log(props.pageNum - 1);
   };
+  let removeFade2 = () => {
+    let copy = [...props.conClass];
+    copy.map(function (a, i) {
+      copy[i] = "";
+    });
+    copy[0] = "end";
+    props.setConClass(copy);
+  };
   return (
     <div className="controlBar">
-      <CircleBox>
+      <CircleBox
+        className="circleBtn"
+        onClick={() => {
+          props.slideWidth == 0
+            ? alert("1번째 페이지입니다.")
+            : props.setSlideWidth(props.slideWidth * 0);
+          props.slideWidth == 0
+            ? props.setPageNum(props.pageNum)
+            : props.setPageNum(props.pageNum * 0 + 1);
+          removeFade2();
+        }}
+      >
         <FontAwesomeIcon icon={faAnglesLeft} />
       </CircleBox>
       <CircleBox
+        className="circleBtn"
         onClick={() => {
           props.slideWidth == 0
             ? alert("1번째 페이지입니다.")
@@ -126,9 +155,10 @@ function NavBar(props) {
           props.slideWidth == 0
             ? props.setPageNum(props.pageNum)
             : props.setPageNum(props.pageNum - 1);
-          removeFade();
+          props.slideWidth == 0
+            ? props.setPageNum(props.pageNum)
+            : removeFade();
         }}
-        className="prev"
       >
         <FontAwesomeIcon icon={faAngleLeft} />
       </CircleBox>
@@ -136,6 +166,7 @@ function NavBar(props) {
         {props.pageNum} / {props.contents.length}
       </NormalBox>
       <CircleBox
+        className="circleBtn"
         onClick={() => {
           props.slideWidth == props.contents.length * -300 + 300
             ? alert("마지막 페이지입니다.")
@@ -143,12 +174,25 @@ function NavBar(props) {
           props.slideWidth == props.contents.length * -300 + 300
             ? props.setPageNum(props.pageNum)
             : props.setPageNum(props.pageNum + 1);
-          fade();
+          props.slideWidth == props.contents.length * -300 + 300
+            ? props.setPageNum(props.pageNum)
+            : fade();
         }}
       >
         <FontAwesomeIcon icon={faAngleRight} />
       </CircleBox>
-      <CircleBox>
+      <CircleBox
+        className="circleBtn"
+        onClick={() => {
+          props.slideWidth == props.contents.length * -300 + 300
+            ? alert("마지막 페이지입니다.")
+            : props.setSlideWidth(props.contents.length * -300 + 300);
+          props.slideWidth == props.contents.length * -300 + 300
+            ? props.setPageNum(props.pageNum)
+            : props.setPageNum(props.contents.length);
+          fade2();
+        }}
+      >
         <FontAwesomeIcon icon={faAnglesRight} />
       </CircleBox>
     </div>
