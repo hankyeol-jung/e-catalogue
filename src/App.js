@@ -13,15 +13,9 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { useDispatch, useSelector } from "react-redux";
+import { nextNum, prevNum } from "./store.js";
 import React from "react";
-import img1 from "./image/page1.jpg";
-import img2 from "./image/page2.jpg";
-import img3 from "./image/page3.jpg";
-import img4 from "./image/page4.jpg";
-import img5 from "./image/page5.jpg";
-import img6 from "./image/page6.jpg";
-import img7 from "./image/page7.jpg";
-import img8 from "./image/page8.jpg";
 
 let CircleBox = styled.button`
   background: #ddd;
@@ -31,7 +25,7 @@ let CircleBox = styled.button`
   border: none;
   color: #fff;
   margin: 8px;
-  transition: all 0.3s;
+  // transition: all 0.3s;
 `;
 let NormalBox = styled.button`
   background: #ddd;
@@ -49,13 +43,13 @@ let Slider = styled.div`
   overflow: hidden;
   position: relative;
   bottom: -50px;
-  transition: 0.3s;
+  // transition: 0.3s;
 `;
 let SliderGroup = styled.div`
   width: ${(props) => props.width}vw;
   height: 860px;
   margin: auto;
-  transition: all 0.3s;
+  // transition: all 0.3s;
   transform: translateX(${(props) => props.x}vw);
 `;
 let SliderContent = styled.div`
@@ -64,105 +58,47 @@ let SliderContent = styled.div`
   height: 860px;
   margin: auto;
   float: left;
-  transition: 0.3s;
+  // transition: 0.3s;
 `;
 
 function App() {
-  let [pageNum, setPageNum] = useState(1);
-  // 슬라이트 너비 state
-  let [slideWidth, setSlideWidth] = useState(0);
-  // data or img 소스 받아오는 state
-  let [contents, setContents] = useState([
-    img1,
-    img2,
-    img3,
-    img4,
-    img5,
-    img6,
-    img7,
-    img8,
-  ]);
-  // data or img 소스 받아오는 state
-  let [conClass, setConClass] = useState(["end", "", "", "", "", "", "", ""]);
-  // img width 값
-  let [imgWidth, setImgWidth] = useState(100);
-  // width 값
-  let [widthResult, setWidthResult] = useState(310);
-  // img width 값
-  let [conWidth, setConWidth] = useState(widthResult);
-  // 확대 width 값
-  let [maxWidth, setMaxWidth] = useState(810);
-  // 프로그래스 값
-  let [maxControl, setMaxControl] = useState(1);
-  // 애니메이션 태그 state
-  let [fade, setFade] = useState("");
-  // 줌인 상태
-  let [zoomState, setZoomState] = useState(false);
+  let state = useSelector((state) => state);
+  let dispatch = useDispatch();
 
   return (
     <div className="App">
-      <Slider width={imgWidth}>
-        <SliderGroup x={slideWidth} width={contents.length * imgWidth}>
-          {contents.map(function (a, i) {
+      <Slider width={state.imgWidth}>
+        <SliderGroup
+          x={state.slideWidth}
+          width={state.contents.length * state.imgWidth}
+        >
+          {state.contents.map(function (a, i) {
             return (
               <SliderContent
                 key={i}
-                className={"slideImg start " + conClass[i]}
+                className={"slideImg start " + state.conClass[i]}
                 bg={a}
-                width={imgWidth}
+                width={state.imgWidth}
               >
-                <img src={contents[i]} style={{ width: conWidth }} />
+                <img
+                  src={state.contents[i]}
+                  style={{ width: state.conWidth }}
+                />
               </SliderContent>
             );
           })}
         </SliderGroup>
       </Slider>
-      {zoomState == true ? (
-        <ZoomBar
-          imgWidth={imgWidth}
-          setImgWidth={setImgWidth}
-          zoomState={zoomState}
-          setZoomState={setZoomState}
-          slideWidth={slideWidth}
-          setSlideWidth={setSlideWidth}
-          pageNum={pageNum}
-          setPageNum={setPageNum}
-          widthResult={widthResult}
-          setWidthResult={setWidthResult}
-          conWidth={conWidth}
-          setConWidth={setConWidth}
-          maxWidth={maxWidth}
-          setMaxWidth={setMaxWidth}
-          maxControl={maxControl}
-          setMaxControl={setMaxControl}
-        />
-      ) : null}
-      <NavBar
-        pageNum={pageNum}
-        setPageNum={setPageNum}
-        slideWidth={slideWidth}
-        setSlideWidth={setSlideWidth}
-        contents={contents}
-        setConClass={setConClass}
-        conClass={conClass}
-        imgWidth={imgWidth}
-        setImgWidth={setImgWidth}
-        zoomState={zoomState}
-        setZoomState={setZoomState}
-        conWidth={conWidth}
-        setConWidth={setConWidth}
-        widthResult={widthResult}
-        setWidthResult={setWidthResult}
-        maxWidth={maxWidth}
-        setMaxWidth={setMaxWidth}
-        maxControl={maxControl}
-        setMaxControl={setMaxControl}
-      />
+      {state.zoomState == true ? <ZoomBar /> : null}
+      <NavBar />
     </div>
   );
 }
 
 function NavBar(props) {
+  let state = useSelector((state) => state);
+  let dispatch = useDispatch();
+
   let fade = () => {
     let copy = [...props.conClass];
     copy[props.pageNum - 1] = "";
@@ -210,39 +146,39 @@ function NavBar(props) {
       </CircleBox>
       <CircleBox
         className="circleBtn"
-        onClick={() => {
-          props.slideWidth == 0
-            ? alert("1번째 페이지입니다.")
-            : props.setSlideWidth(props.slideWidth + props.imgWidth);
-          props.slideWidth == 0
-            ? props.setPageNum(props.pageNum)
-            : props.setPageNum(props.pageNum - 1);
-          props.slideWidth == 0
-            ? props.setPageNum(props.pageNum)
-            : removeFade();
-        }}
+        // onClick={() => {
+        //   state.slideWidth == 0
+        //     ? alert("1번째 페이지입니다.")
+        //     : props.setSlideWidth(props.slideWidth + props.imgWidth);
+        //   state.slideWidth == 0
+        //     ? state.pageNum
+        //     : props.setPageNum(props.pageNum - 1);
+        //   state.slideWidth == 0
+        //     ? props.setPageNum(props.pageNum)
+        //     : removeFade();
+        // }}
       >
         <FontAwesomeIcon icon={faAngleLeft} />
       </CircleBox>
       <NormalBox>
-        {props.pageNum} / {props.contents.length}
+        {state.pageNum} / {state.contents.length}
       </NormalBox>
       <CircleBox
         className="circleBtn"
-        onClick={() => {
-          props.slideWidth ==
-          props.contents.length * -props.imgWidth + props.imgWidth
-            ? alert("마지막 페이지입니다.")
-            : props.setSlideWidth(props.slideWidth - props.imgWidth);
-          props.slideWidth ==
-          props.contents.length * -props.imgWidth + props.imgWidth
-            ? props.setPageNum(props.pageNum)
-            : props.setPageNum(props.pageNum + 1);
-          props.slideWidth ==
-          props.contents.length * -props.imgWidth + props.imgWidth
-            ? props.setPageNum(props.pageNum)
-            : fade();
-        }}
+        // onClick={() => {
+        //   state.slideWidth ==
+        //   state.contents.length * -state.imgWidth + state.imgWidth
+        //     ? alert("마지막 페이지입니다.")
+        //     : props.setSlideWidth(state.slideWidth - state.imgWidth);
+        //   state.slideWidth ==
+        //   state.contents.length * -state.imgWidth + state.imgWidth
+        //     ? state.pageNum
+        //     : dispatch(nextNum());
+        //   state.slideWidth ==
+        //   state.contents.length * -state.imgWidth + state.imgWidth
+        //     ? props.setPageNum(state.pageNum)
+        //     : fade();
+        // }}
       >
         <FontAwesomeIcon icon={faAngleRight} />
       </CircleBox>
@@ -266,11 +202,11 @@ function NavBar(props) {
       </CircleBox>
 
       <CircleBox
-        onClick={() => {
-          let copy = props.maxWidth;
-          props.setConWidth(copy);
-          props.setZoomState(true);
-        }}
+      // onClick={() => {
+      //   let copy = props.maxWidth;
+      //   props.setConWidth(copy);
+      //   props.setZoomState(true);
+      // }}
       >
         +
       </CircleBox>
@@ -288,10 +224,8 @@ function ZoomBar(props) {
           min="1"
           max="100"
           onChange={(e) => {
-            props.setMaxControl(props.widthResult + e.target.value * 10);
-            // let copy = props.widthResult / 10;
             props.setConWidth(props.maxControl);
-            console.log(props.conWidth);
+            props.setMaxControl(props.widthResult + e.target.value * 10);
           }}
         ></input>
         <button
