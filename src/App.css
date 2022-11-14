@@ -22,13 +22,17 @@
 .slideImg {
   position: relative;
   overflow: scroll;
+
+  justify-content: center;
+  align-items: center;
 }
 .slideImg img {
-  position: absolute;
+  /* position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%); */
   transition: 0.1s;
+  box-shadow: 3px 3px 3px 3px #dddddd50;
 }
 .zoomBar {
   position: absolute;
